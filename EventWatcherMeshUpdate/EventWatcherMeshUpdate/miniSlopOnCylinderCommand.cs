@@ -10,12 +10,12 @@ namespace EventWatcherMeshUpdate
 {
 
     [System.Runtime.InteropServices.Guid("6634a1fb-7203-47d6-927e-26decc2dcd9f")]
-    public class EventWatcherMeshUpdateCommand : Command
+    public class miniSlopOnCylinderCommand : Command
     {
         Rhino.Geometry.Morphs.SplopSpaceMorph morph;
         Rhino.Geometry.BoundingBox testBox;
 
-        public EventWatcherMeshUpdateCommand()
+        public miniSlopOnCylinderCommand()
         {
             // Rhino only creates one instance of each command class defined in a
             // plug-in, so it is safe to store a refence in a static property.
@@ -40,7 +40,7 @@ namespace EventWatcherMeshUpdate
         }
 
         ///<summary>The only instance of this command.</summary>
-        public static EventWatcherMeshUpdateCommand Instance
+        public static miniSlopOnCylinderCommand Instance
         {
             get; private set;
         }
@@ -48,7 +48,7 @@ namespace EventWatcherMeshUpdate
         ///<returns>The command name as it appears on the Rhino command line.</returns>
         public override string EnglishName
         {
-            get { return "EventWatcherMeshUpdateCommand"; }
+            get { return "miniSlopOnCylinder"; }
         }
 
         protected override Result RunCommand(RhinoDoc doc, RunMode mode)
@@ -71,7 +71,7 @@ namespace EventWatcherMeshUpdate
             }
 
 
-            RhinoApp.WriteLine("EventWatcherMeshUpdate:" + Enabled);
+            RhinoApp.WriteLine("miniSlopOnCylinder:" + Enabled);
 
             return Result.Success;
         }
@@ -120,15 +120,15 @@ namespace EventWatcherMeshUpdate
 
                     morph.Morph(splopMesh);
 
-                    bool replaceResult = false;
+                    bool replacedResult = false;
 
                     if (objectLookup.ContainsKey(e.ObjectId))
                     {
-                        replaceResult = doc.Objects.Replace(objectLookup[e.ObjectId], splopMesh);
+                        replacedResult = doc.Objects.Replace(objectLookup[e.ObjectId], splopMesh);
                         doc.Objects.ModifyAttributes(objectLookup[e.ObjectId], e.TheObject.Attributes, true);
                     }
 
-                    if (!replaceResult)
+                    if (!replacedResult)
                         objectLookup[e.ObjectId] = doc.Objects.Add(splopMesh, e.TheObject.Attributes);
                 }
             }
