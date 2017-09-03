@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MeshLineThroughPtsCommand.cs" />
+    <Compile Include="miniMeshFaceCenters.cs" />
     <Compile Include="miniMeshLineThroughPtsCommand.cs" />
     <Compile Include="miniSlopOnCylinderCommand.cs" />
     <Compile Include="EventWatcherMeshUpdatePlugIn.cs" />

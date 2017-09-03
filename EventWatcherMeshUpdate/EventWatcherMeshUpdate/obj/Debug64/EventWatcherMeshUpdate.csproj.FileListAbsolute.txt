@@ -2,4 +2,3 @@ C:\Users\mnewb\documents\visual studio 2015\Projects\EventWatcherMeshUpdate\Even
 C:\Users\mnewb\documents\visual studio 2015\Projects\EventWatcherMeshUpdate\EventWatcherMeshUpdate\bin\EventWatcherMeshUpdate.pdb
 C:\Users\mnewb\documents\visual studio 2015\Projects\EventWatcherMeshUpdate\EventWatcherMeshUpdate\obj\Debug64\EventWatcherMeshUpdate.dll
 C:\Users\mnewb\documents\visual studio 2015\Projects\EventWatcherMeshUpdate\EventWatcherMeshUpdate\obj\Debug64\EventWatcherMeshUpdate.pdb
-C:\Users\mnewb\Documents\Visual Studio 2015\Projects\EventWatcherMeshUpdate\EventWatcherMeshUpdate\obj\Debug64\EventWatcherMeshUpdate.csprojResolveAssemblyReference.cache

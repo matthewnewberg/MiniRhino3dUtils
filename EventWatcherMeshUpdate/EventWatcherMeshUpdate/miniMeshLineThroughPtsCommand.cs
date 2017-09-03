@@ -11,7 +11,6 @@ namespace EventWatcherMeshUpdate
     public class miniMeshLineThroughPtsCommand : Command
     {
         bool Enabled = false;
-
         bool inReplace = false;
 
         Dictionary<Guid, Guid> objectLookup = new Dictionary<Guid, Guid>();
@@ -46,7 +45,7 @@ namespace EventWatcherMeshUpdate
 
                 foreach (var obj in doc.Objects)
                 {
-                    if (!obj.IsDeleted)
+                    if (obj.IsDeleted)
                         continue;
 
                     var mesh = obj.Geometry as Mesh;
@@ -63,6 +62,9 @@ namespace EventWatcherMeshUpdate
                 RhinoDoc.AddRhinoObject -= RhinoObjectAdded;
                 RhinoDoc.DeleteRhinoObject -= RhinoObjectDeleted;
                 RhinoDoc.ReplaceRhinoObject -= RhinoObjectReplace;
+
+                // Leave the lines, just clear the lookup
+                objectLookup.Clear();
             }
 
             RhinoApp.WriteLine("miniMeshLineThroughPts:" + Enabled);
