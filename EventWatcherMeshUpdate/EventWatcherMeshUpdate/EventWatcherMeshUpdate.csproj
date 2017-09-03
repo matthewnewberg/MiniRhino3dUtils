@@ -53,7 +53,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EventWatcherMeshUpdateCommand.cs" />
+    <Compile Include="MeshLineThroughPtsCommand.cs" />
+    <Compile Include="miniMeshLineThroughPtsCommand.cs" />
+    <Compile Include="miniSlopOnCylinderCommand.cs" />
     <Compile Include="EventWatcherMeshUpdatePlugIn.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
