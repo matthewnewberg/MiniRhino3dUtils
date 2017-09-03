@@ -53,6 +53,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MeshBoundingBox.cs" />
     <Compile Include="MeshLineThroughPtsCommand.cs" />
     <Compile Include="miniMeshFaceCenters.cs" />
     <Compile Include="miniMeshLineThroughPtsCommand.cs" />

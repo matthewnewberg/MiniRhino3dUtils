@@ -5,51 +5,56 @@ using Rhino.Geometry;
 
 namespace EventWatcherMeshUpdate
 {
-    [System.Runtime.InteropServices.Guid("4281794f-0918-45da-b0a8-ad8550bb4e73")]
-    public class MeshLineThroughPtsCommand : Command
+    [System.Runtime.InteropServices.Guid("f38fae3b-b71e-4799-86b9-e373ec4e222f")]
+    public class MeshBoundingBox : Command
     {
-        static MeshLineThroughPtsCommand _instance;
-        public MeshLineThroughPtsCommand()
+        static MeshBoundingBox _instance;
+        public MeshBoundingBox()
         {
             _instance = this;
         }
 
-        ///<summary>The only instance of the MeshLineThroughPtsCommand command.</summary>
-        public static MeshLineThroughPtsCommand Instance
+        ///<summary>The only instance of the MeshBoundingBox command.</summary>
+        public static MeshBoundingBox Instance
         {
             get { return _instance; }
         }
 
         public override string EnglishName
         {
-            get { return "MeshLineThroughPts"; }
+            get { return "MeshBoundingBox"; }
         }
 
         private const int HISTORY_VERSION = 201700903;
 
         protected override Result RunCommand(RhinoDoc doc, RunMode mode)
         {
-            const Rhino.DocObjects.ObjectType filter = Rhino.DocObjects.ObjectType.Mesh;
+            const Rhino.DocObjects.ObjectType filter = Rhino.DocObjects.ObjectType.AnyObject;
             Rhino.DocObjects.ObjRef objref;
-            Rhino.Commands.Result rc = Rhino.Input.RhinoGet.GetOneObject("Select mesh to add line to", false, filter, out objref);
+            Rhino.Commands.Result rc = Rhino.Input.RhinoGet.GetOneObject("Select object to create mesh bounding box", false, filter, out objref);
             if (rc != Rhino.Commands.Result.Success || objref == null)
                 return rc;
 
-            Rhino.Geometry.Mesh mesh = objref.Mesh();
-            if (null == mesh || !mesh.IsValid)
+            var geom = objref.Geometry();
+            if (null == geom || !geom.IsValid)
                 return Rhino.Commands.Result.Failure;
 
-            Line fittedLine = new Line();
-            Line.TryFitLineToPoints(mesh.Vertices.ToPoint3dArray(), out fittedLine);
-
+            var mesh = MeshBoundingBoxFromObject(objref.Geometry());
+            
             Rhino.DocObjects.HistoryRecord history = new Rhino.DocObjects.HistoryRecord(this, HISTORY_VERSION);
             WriteHistory(history, objref);
-            
-            doc.Objects.AddCurve(new LineCurve(fittedLine), null, history, false);
+
+            doc.Objects.AddMesh(mesh, null, history, false);
 
             doc.Views.Redraw();
 
             return Result.Success;
+        }
+
+        Mesh MeshBoundingBoxFromObject(GeometryBase obj)
+        {
+            BoundingBox box = obj.GetBoundingBox(true);
+            return Mesh.CreateFromBox(box, 2, 2, 2);
         }
 
         protected override bool ReplayHistory(Rhino.DocObjects.ReplayHistoryData replay)
@@ -59,17 +64,16 @@ namespace EventWatcherMeshUpdate
             if (!ReadHistory(replay, ref objref))
                 return false;
 
-            Rhino.Geometry.Mesh mesh = objref.Mesh();
-            if (null == mesh)
+            var obj = objref.Geometry();
+            if (null == obj)
                 return false;
 
             if (replay.Results.Length != 1)
                 return false;
 
-            Line fittedLine = new Line();
-            Line.TryFitLineToPoints(mesh.Vertices.ToPoint3dArray(), out fittedLine);
+            Mesh mesh = MeshBoundingBoxFromObject(obj);
 
-            replay.Results[0].UpdateToCurve(new LineCurve(fittedLine), null);
+            replay.Results[0].UpdateToMesh(mesh, null);
 
             return true;
         }
