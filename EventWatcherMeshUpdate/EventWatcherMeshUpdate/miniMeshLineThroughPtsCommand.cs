@@ -67,6 +67,8 @@ namespace EventWatcherMeshUpdate
 
             RhinoApp.WriteLine("miniMeshLineThroughPts:" + Enabled);
 
+            doc.Views.Redraw();
+
             return Result.Success;
         }
 

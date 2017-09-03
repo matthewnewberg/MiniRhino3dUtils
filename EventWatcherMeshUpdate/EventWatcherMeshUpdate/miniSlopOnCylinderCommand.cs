@@ -61,6 +61,9 @@ namespace EventWatcherMeshUpdate
                 RhinoDoc.AddRhinoObject += RhinoObjectAdded;
                 RhinoDoc.DeleteRhinoObject += RhinoObjectDeleted;
                 RhinoDoc.ReplaceRhinoObject += RhinoObjectReplace;
+
+                foreach (var obj in doc.Objects)
+                    SlopOnCylinder(obj, obj.Attributes.ObjectId, doc);
             }
 
             else
@@ -72,6 +75,8 @@ namespace EventWatcherMeshUpdate
 
 
             RhinoApp.WriteLine("miniSlopOnCylinder:" + Enabled);
+
+            doc.Views.Redraw();
 
             return Result.Success;
         }
@@ -105,35 +110,44 @@ namespace EventWatcherMeshUpdate
             var doc = e.TheObject.Document;
             if (Enabled)
             {
-                Rhino.DocObjects.MeshObject meshObject = e.TheObject as MeshObject;
 
-                if (meshObject != null && meshObject.IsValid)
-                {
-                    var objectBox = e.TheObject.Geometry.GetBoundingBox(true);
-
-                    if (!testBox.Contains(objectBox, true))
-                        return;
-
-                    var mesh = meshObject.Geometry as Mesh;
-
-                    var splopMesh = mesh.DuplicateMesh();
-
-                    morph.Morph(splopMesh);
-
-                    bool replacedResult = false;
-
-                    if (objectLookup.ContainsKey(e.ObjectId))
-                    {
-                        replacedResult = doc.Objects.Replace(objectLookup[e.ObjectId], splopMesh);
-                        doc.Objects.ModifyAttributes(objectLookup[e.ObjectId], e.TheObject.Attributes, true);
-                    }
-
-                    if (!replacedResult)
-                        objectLookup[e.ObjectId] = doc.Objects.Add(splopMesh, e.TheObject.Attributes);
-                }
+                SlopOnCylinder(e.TheObject, e.ObjectId, doc);
             }
 
             inReplace = false;
+        }
+
+
+        private void SlopOnCylinder(Rhino.DocObjects.RhinoObject obj, Guid objectId, RhinoDoc doc)
+        {
+            Rhino.DocObjects.MeshObject meshObject = obj as MeshObject;
+
+            if (meshObject != null && meshObject.IsValid)
+            {
+                var objectBox = obj.Geometry.GetBoundingBox(true);
+
+                if (!testBox.Contains(objectBox, true))
+                    return;
+
+                var mesh = meshObject.Geometry as Mesh;
+
+                var splopMesh = mesh.DuplicateMesh();
+
+                morph.Morph(splopMesh);
+
+                bool replacedResult = false;
+
+                if (objectLookup.ContainsKey(objectId))
+                {
+                    replacedResult = doc.Objects.Replace(objectLookup[objectId], splopMesh);
+                    doc.Objects.ModifyAttributes(objectLookup[objectId], obj.Attributes, true);
+                }
+
+                if (!replacedResult)
+                    objectLookup[objectId] = doc.Objects.Add(splopMesh, obj.Attributes);
+            }
+
+
         }
     }
 }
